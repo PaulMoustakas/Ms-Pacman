@@ -6,6 +6,8 @@ import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
+import java.util.HashMap;
+
 public class DataTuple {
 
 	public enum DiscreteTag {
@@ -54,6 +56,12 @@ public class DataTuple {
 	public MOVE pinkyDir;
 	public MOVE sueDir;
 
+	public boolean atJunction = false;
+	public boolean upMovePossible = false;
+	public boolean downMovePossible = false;
+	public boolean leftMovePossible = false;
+	public boolean rightMovePossible = false;
+
 	// Util data - useful for normalization
 	public int numberOfNodesInLevel;
 	public int numberOfTotalPillsInLevel;
@@ -76,6 +84,28 @@ public class DataTuple {
 		this.currentLevelTime = game.getCurrentLevelTime();
 		this.numOfPillsLeft = game.getNumberOfActivePills();
 		this.numOfPowerPillsLeft = game.getNumberOfActivePowerPills();
+		this.atJunction = game.isJunction(this.pacmanPosition);
+
+		MOVE [] availableMoves = game.getPossibleMoves(this.pacmanPosition);
+
+		int i = 0;
+
+		while ( i < availableMoves.length) {
+
+			if (availableMoves[i] == MOVE.UP)
+				this.upMovePossible = true;
+
+			else if (availableMoves[i] == MOVE.DOWN)
+				this.downMovePossible = true;
+
+			else if (availableMoves [i] == MOVE.LEFT)
+				this.leftMovePossible = true;
+
+			else if (availableMoves[i] == MOVE.RIGHT)
+				this.rightMovePossible = true;
+
+			i++;
+		}
 
 		if (game.getGhostLairTime(GHOST.BLINKY) == 0) {
 			this.isBlinkyEdible = game.isGhostEdible(GHOST.BLINKY);
@@ -262,6 +292,39 @@ public class DataTuple {
 	public DiscreteTag discretizeCurrentScore(int score) {
 		double aux = this.normalizeCurrentScore(score);
 		return DiscreteTag.DiscretizeDouble(aux);
+	}
+
+	public String returnState (String state) {
+
+		HashMap <String, String> stateMap = new HashMap<>();
+
+		stateMap.put("isBlinkyEdible",  Boolean.toString(isBlinkyEdible));
+		stateMap.put("IsInkyEdible",Boolean.toString(isInkyEdible));
+		stateMap.put("IsPinkyEdible", Boolean.toString(isPinkyEdible));
+		stateMap.put("IsSueEdible", Boolean.toString(isSueEdible));
+
+		stateMap.put("blinkyDist", discretizeDistance(blinkyDist).toString());
+		stateMap.put("inkyDist", discretizeDistance(inkyDist).toString());
+		stateMap.put("pinkyDist", discretizeDistance(pinkyDist).toString());
+		stateMap.put("sueDist", discretizeDistance(pinkyDist).toString());
+
+
+		stateMap.put("blinkyDir", blinkyDir.toString());
+		stateMap.put("inkyDir", inkyDir.toString());
+		stateMap.put("pinkyDir", pinkyDir.toString());
+		stateMap.put("sueDir", sueDir.toString());
+
+
+		stateMap.put("atJunction", Boolean.toString(atJunction));
+		stateMap.put("upMovePossible", Boolean.toString(upMovePossible));
+		stateMap.put("downMovePossible", Boolean.toString(downMovePossible));
+		stateMap.put("rightMovePossible", Boolean.toString(rightMovePossible));
+		stateMap.put("leftMovePossible", Boolean.toString(leftMovePossible));
+
+		String returnState = stateMap.get(state);
+
+		return state;
+
 	}
 
 }
