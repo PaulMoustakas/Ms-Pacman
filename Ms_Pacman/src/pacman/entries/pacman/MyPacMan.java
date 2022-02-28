@@ -20,13 +20,14 @@ public class MyPacMan extends Controller<MOVE> {
 
 	private List<DataTuple> testSet;
 	private List<DataTuple> trainingSet;
-	private Map<String, List<String>> traitMap = new HashMap<String, List<String>>();
+	private Map<String, List<String>> traitMap;
+	private List<String> traitList;
 
 	private Node node;
 
 	public MyPacMan() {
 		divideAndGetDataPortions(20);
-
+		initializeCharacteristics();
 
 
 	}
@@ -38,7 +39,6 @@ public class MyPacMan extends Controller<MOVE> {
 		
 		return myMove;
 	}
-
 
 
 	/**
@@ -61,10 +61,134 @@ public class MyPacMan extends Controller<MOVE> {
 		}
 
 		// Test portion
-		trainingSet.addAll(data);
+		testSet.addAll(data);
 	}
 
 
+	private pacman.entries.pacman.Node initializeTree (ArrayList<DataTuple> trainingSet, ArrayList<String> traitList) {
+
+		pacman.entries.pacman.Node node = new pacman.entries.pacman.Node();
+
+		MOVE move = trainingSet.get(0).DirectionChosen;
+		boolean classDifference = false;
+		int i = 0;
+
+		while (i < trainingSet.size()) {
+			if (trainingSet.get(i).DirectionChosen != move) {
+				classDifference = true;
+				i = trainingSet.size();
+			}
+			i++;
+		}
+
+		if (!classDifference) {
+			node.setLabel(move.toString());
+			return node;
+		}
+
+		if (traitList.size() == 0) {
+			node.setLabel(classMajority(trainingSet).toString());
+			return node;
+		}
+
+		String trait =
+
+
+
+
+	}
+
+	private void initializeCharacteristics () {
+		traitMap = new HashMap<>();
+
+		setDirections();
+		setDistance();
+		setBools();
+
+		traitList = new ArrayList<>(traitMap.keySet());
+	}
+
+	private void setDirections () {
+		List<String> directionStrings = new ArrayList<>();
+
+		directionStrings.add("UP");
+		directionStrings.add("DOWN");
+		directionStrings.add("RIGHT");
+		directionStrings.add("NEUTRAL");
+		directionStrings.add("LEFT");
+
+		traitMap.put("inkyDir", directionStrings);
+		traitMap.put("pinkyDir", directionStrings);
+		traitMap.put("blinkyDir", directionStrings);
+		traitMap.put("sueDir", directionStrings);
+	}
+
+	private void setDistance() {
+		List<String> distanceStrings = new ArrayList<>();
+
+		distanceStrings.add("VERY_HIGH");
+		distanceStrings.add("HIGH");
+		distanceStrings.add("MEDIUM");
+		distanceStrings.add("LOW");
+		distanceStrings.add("VERY_LOW");
+		distanceStrings.add("NONE");
+
+		traitMap.put("blinkyDist", distanceStrings);
+		traitMap.put("pinkyDist", distanceStrings);
+		traitMap.put("sueDist", distanceStrings);
+		traitMap.put("inkyDist", distanceStrings);
+	}
+
+	private void setBools () {
+		List<String> boolString = new ArrayList<>();
+
+		boolString.add("true");
+		boolString.add("false");
+
+		traitMap.put("isBlinkyEdible",boolString);
+		traitMap.put("isPinkyEdible",boolString);
+		traitMap.put("isSueEdible",boolString);
+		traitMap.put("isInkyEdible",boolString);
+	}
+
+
+	private MOVE classMajority (ArrayList<DataTuple> data) {
+
+		List<MoveDirection> moveDirectionList = new ArrayList();
+		moveDirectionList.add(new MoveDirection(MOVE.UP));
+		moveDirectionList.add(new MoveDirection(MOVE.DOWN));
+		moveDirectionList.add(new MoveDirection(MOVE.LEFT));
+		moveDirectionList.add(new MoveDirection(MOVE.RIGHT));
+		moveDirectionList.add(new MoveDirection(MOVE.NEUTRAL));
+
+
+	}
+
+
+
+	public static class MoveDirection {
+
+		public MOVE move;
+		public int moveCounter;
+
+
+		public MoveDirection (MOVE move) {
+			this.move = move;
+			moveCounter = 0;
+		}
+
+		public MOVE getMove() {
+			return move;
+		}
+
+		public int getMoveCounter() {
+			return moveCounter;
+		}
+
+		public void incrementMoveCounter () {
+			moveCounter++;
+		}
+	}
 
 
 
