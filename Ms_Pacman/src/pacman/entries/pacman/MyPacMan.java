@@ -5,7 +5,6 @@ import dataRecording.DataTuple;
 import pacman.controllers.Controller;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.game.internal.Node;
 
 import java.util.*;
 
@@ -20,25 +19,21 @@ public class MyPacMan extends Controller<MOVE> {
 
 	private List<DataTuple> testSet;
 	private List<DataTuple> trainingSet;
-	private Map<String, List<String>> attributMap;
+	private Map<String, List<String>> attributeMap;
 	private ArrayList<String> attributeList;
 
-	private Node node;
+	private Node rootNode;
 
 	public MyPacMan() {
 		divideAndGetDataPortions(20);
-		initializeCharacteristics();
-		
-
-
+		initializeModelAttributes();
+		rootNode = initializeTree((ArrayList<DataTuple>) trainingSet, attributeList);
+		treeAccuracy();
 	}
 
 	
-	public MOVE getMove(Game game, long timeDue) 
-	{
-		//Place your game logic here to play the game as Ms Pac-Man
-		
-		return myMove;
+	public MOVE getMove(Game game, long timeDue) {
+		return treeTraversal(rootNode, new DataTuple(game, null));
 	}
 
 
@@ -65,14 +60,78 @@ public class MyPacMan extends Controller<MOVE> {
 		testSet.addAll(data);
 	}
 
-	private void initializeCharacteristics () {
-		attributMap = new HashMap<>();
+
+
+	public void treeAccuracy () {
+		double upMovesPerformed = 0, downMovesPerformed = 0, leftMovesPerformed = 0, rightMovesPerformed = 0, neutralMovesPerformed = 0;
+
+		double modelHits = 0;
+
+		int i = 0;
+
+		while (i < testSet.size()) {
+			MOVE testSetMove = testSet.get(i).DirectionChosen;
+			MOVE actualMove = treeTraversal(rootNode,testSet.get(i));
+
+			if (testSetMove == actualMove)
+				modelHits++;
+
+			if (testSetMove == MOVE.UP)
+				upMovesPerformed++;
+
+			if (testSetMove == MOVE.DOWN)
+				downMovesPerformed++;
+
+
+			if (testSetMove == MOVE.LEFT)
+				leftMovesPerformed++;
+
+			if (testSetMove == MOVE.NEUTRAL)
+				neutralMovesPerformed++;
+
+
+			double accuracy = modelHits / testSet.size();
+
+			System.out.println("\nTree Accuracy: " + accuracy + "\n");
+
+			System.out.println("Up: " + (upMovesPerformed/ testSet.size()));
+			System.out.println("Down: " + (downMovesPerformed / testSet.size()));
+			System.out.println("Left: " + (leftMovesPerformed / testSet.size()));
+			System.out.println("Right: " + ( rightMovesPerformed/ testSet.size()));
+			System.out.println("Neutral: " + (neutralMovesPerformed / testSet.size()));
+
+		}
+	}
+
+	private MOVE treeTraversal(pacman.entries.pacman.Node node, DataTuple dataTuple) {
+
+		MOVE move = null;
+
+		if (node.nodeChildren.size() == 0 ) {
+			 move = MOVE.valueOf(node.getNodeLabel());
+		}
+
+		else {
+			String valueOfAttribute = dataTuple.returnState(node.getNodeLabel());
+			System.out.println(valueOfAttribute);
+			Node next = null;
+			next = node.getChild(valueOfAttribute);
+
+			move = treeTraversal(next,dataTuple);
+		}
+		return move;
+	}
+
+
+
+	private void initializeModelAttributes() {
+		attributeMap = new HashMap<>();
 
 		setDirections();
 		setDistance();
 		setBools();
 
-		attributeList = new ArrayList<>(attributMap.keySet());
+		attributeList = new ArrayList<>(attributeMap.keySet());
 	}
 
 	private void setDirections () {
@@ -84,10 +143,10 @@ public class MyPacMan extends Controller<MOVE> {
 		directionStrings.add("NEUTRAL");
 		directionStrings.add("LEFT");
 
-		attributMap.put("inkyDir", directionStrings);
-		attributMap.put("pinkyDir", directionStrings);
-		attributMap.put("blinkyDir", directionStrings);
-		attributMap.put("sueDir", directionStrings);
+		attributeMap.put("inkyDir", directionStrings);
+		attributeMap.put("pinkyDir", directionStrings);
+		attributeMap.put("blinkyDir", directionStrings);
+		attributeMap.put("sueDir", directionStrings);
 	}
 
 	private void setDistance() {
@@ -100,10 +159,10 @@ public class MyPacMan extends Controller<MOVE> {
 		distanceStrings.add("VERY_LOW");
 		distanceStrings.add("NONE");
 
-		attributMap.put("blinkyDist", distanceStrings);
-		attributMap.put("pinkyDist", distanceStrings);
-		attributMap.put("sueDist", distanceStrings);
-		attributMap.put("inkyDist", distanceStrings);
+		attributeMap.put("blinkyDist", distanceStrings);
+		attributeMap.put("pinkyDist", distanceStrings);
+		attributeMap.put("sueDist", distanceStrings);
+		attributeMap.put("inkyDist", distanceStrings);
 	}
 
 	private void setBools () {
@@ -112,10 +171,10 @@ public class MyPacMan extends Controller<MOVE> {
 		boolString.add("true");
 		boolString.add("false");
 
-		attributMap.put("isBlinkyEdible",boolString);
-		attributMap.put("isPinkyEdible",boolString);
-		attributMap.put("isSueEdible",boolString);
-		attributMap.put("isInkyEdible",boolString);
+		attributeMap.put("isBlinkyEdible",boolString);
+		attributeMap.put("isPinkyEdible",boolString);
+		attributeMap.put("isSueEdible",boolString);
+		attributeMap.put("isInkyEdible",boolString);
 	}
 
 
@@ -152,7 +211,7 @@ public class MyPacMan extends Controller<MOVE> {
 		node.setLabel(A);
 		attributeList.remove(A);
 
-		List<String> possibleValueA = attributMap.get(A);
+		List<String> possibleValueA = attributeMap.get(A);
 
 		for (String AS : possibleValueA) {
 			ArrayList<DataTuple> TS = new ArrayList<>();
@@ -168,7 +227,6 @@ public class MyPacMan extends Controller<MOVE> {
 				node.addChild(AS,initializeTree(TS, (ArrayList<String>) attributeList.clone()));
 			}
 		}
-
 		return node;
 	}
 
@@ -217,7 +275,7 @@ public class MyPacMan extends Controller<MOVE> {
 
 		for (String A : traitList) {
 			double tempA = 0.0;
-			ArrayList<String> possibleValueA = (ArrayList<String>) attributMap.get(A);
+			ArrayList<String> possibleValueA = (ArrayList<String>) attributeMap.get(A);
 			Map<String, Integer> valueMap = new HashMap<>();
 
 			for (String AValue : possibleValueA) {
@@ -313,9 +371,3 @@ public class MyPacMan extends Controller<MOVE> {
 		}
 	}
 
-
-
-
-
-
-}

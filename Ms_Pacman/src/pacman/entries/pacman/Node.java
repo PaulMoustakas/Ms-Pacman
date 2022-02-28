@@ -15,6 +15,10 @@ public class Node {
         this.nodeLabel = nodeLabel;
     }
 
+    public String getNodeLabel () {
+        return nodeLabel;
+    }
+
     public void setLabel (String label) {
         this.nodeLabel = label;
     }
