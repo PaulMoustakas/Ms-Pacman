@@ -87,7 +87,7 @@ public class MyPacMan extends Controller<MOVE> {
 		}
 
 		if (traitList.size() == 0) {
-			node.setLabel(classMajority(trainingSet).toString());
+			node.setLabel(getMajority(trainingSet).toString());
 			return node;
 		}
 
@@ -152,7 +152,7 @@ public class MyPacMan extends Controller<MOVE> {
 	}
 
 
-	private MOVE classMajority (ArrayList<DataTuple> data) {
+	private MOVE getMajority (ArrayList<DataTuple> data) {
 
 		List<MoveDirection> moveDirectionList = new ArrayList();
 		moveDirectionList.add(new MoveDirection(MOVE.UP));
@@ -161,7 +161,26 @@ public class MyPacMan extends Controller<MOVE> {
 		moveDirectionList.add(new MoveDirection(MOVE.RIGHT));
 		moveDirectionList.add(new MoveDirection(MOVE.NEUTRAL));
 
+		for (DataTuple dataTuple : data ) {
+			if (dataTuple.DirectionChosen == MOVE.UP)
+				moveDirectionList.get(0).incrementMoveCounter();
 
+			if (dataTuple.DirectionChosen == MOVE.DOWN)
+				moveDirectionList.get(1).incrementMoveCounter();
+
+			if (dataTuple.DirectionChosen == MOVE.LEFT)
+				moveDirectionList.get(2).incrementMoveCounter();
+
+			if (dataTuple.DirectionChosen == MOVE.RIGHT)
+				moveDirectionList.get(3).incrementMoveCounter();
+
+			if (dataTuple.DirectionChosen == MOVE.NEUTRAL)
+				moveDirectionList.get(4).incrementMoveCounter();
+		}
+
+		moveDirectionList.sort(Comparator.comparing(MoveDirection::getMoveCounter));
+
+		return moveDirectionList.get(4).move;
 	}
 
 
