@@ -311,11 +311,11 @@ public class DataTuple {
 			case "sueDir" -> sueDir.toString();
 
 			//Custom attributes
-			case "atCrossroads" -> Boolean.toString(atJunction);
-			case "upPossible" -> Boolean.toString(upMovePossible);
-			case "downPossible" -> Boolean.toString(downMovePossible);
-			case "leftPossible" -> Boolean.toString(leftMovePossible);
-			case "rightPossible" -> Boolean.toString(rightMovePossible);
+			case "atJunction" -> Boolean.toString(atJunction);
+			case "upMovePossible" -> Boolean.toString(upMovePossible);
+			case "downMovePossible" -> Boolean.toString(downMovePossible);
+			case "leftMovePossible" -> Boolean.toString(leftMovePossible);
+			case "rightMovePossible" -> Boolean.toString(rightMovePossible);
 			default -> "";
 		};
 

@@ -92,30 +92,23 @@ public class MyPacMan extends Controller<MOVE> {
 
 			double accuracy = modelHits / testSet.size();
 
-			System.out.println("\nTree Accuracy: " + accuracy + "\n");
-
-			System.out.println("Up: " + (upMovesPerformed/ testSet.size()));
-			System.out.println("Down: " + (downMovesPerformed / testSet.size()));
-			System.out.println("Left: " + (leftMovesPerformed / testSet.size()));
-			System.out.println("Right: " + ( rightMovesPerformed/ testSet.size()));
-			System.out.println("Neutral: " + (neutralMovesPerformed / testSet.size()));
+			System.out.println("Tree Accuracy: " + accuracy + "\n");
 
 		}
 	}
 
 	private MOVE treeTraversal(pacman.entries.pacman.Node node, DataTuple dataTuple) {
 
-		MOVE move = null;
+		MOVE move;
 
-		if (node.children.size() == 0 ) {
+		if (node.nodeChildren.size() == 0 ) {
 			 move = MOVE.valueOf(node.getLabel());
 		}
 
 		else {
 			String valueOfAttribute = dataTuple.returnState(node.getLabel());
 			System.out.println(valueOfAttribute);
-			Node next = null;
-			next = node.getChild(valueOfAttribute);
+			Node next = node.getChild(valueOfAttribute);
 
 			move = treeTraversal(next,dataTuple);
 		}
@@ -175,6 +168,13 @@ public class MyPacMan extends Controller<MOVE> {
 		attributeMap.put("isPinkyEdible",boolString);
 		attributeMap.put("isSueEdible",boolString);
 		attributeMap.put("isInkyEdible",boolString);
+
+		attributeMap.put("atJunction",boolString);
+
+		attributeMap.put("upMovePossible",boolString);
+		attributeMap.put("downMovePossible",boolString);
+		attributeMap.put("leftMovePossible",boolString);
+		attributeMap.put("rightMovePossible",boolString);
 	}
 
 
@@ -206,7 +206,7 @@ public class MyPacMan extends Controller<MOVE> {
 			return node;
 		}
 
-		String A = S(trainingSet, attributeList);
+		String A = returnS(trainingSet, attributeList);
 
 		node.setLabel(A);
 		attributeList.remove(A);
@@ -268,7 +268,7 @@ public class MyPacMan extends Controller<MOVE> {
 	 * @Param attributes
 	 * @retun S
 	 */
-	private String S (ArrayList<DataTuple> dataSet, ArrayList<String> traitList) {
+	private String returnS(ArrayList<DataTuple> dataSet, ArrayList<String> traitList) {
 		String returnValue = "";
 
 		double valueAlpha = Integer.MAX_VALUE;
@@ -320,9 +320,6 @@ public class MyPacMan extends Controller<MOVE> {
 				returnValue = A;
 			}
 
-			if (Objects.equals(returnValue, "")) {
-				int number = 0;
-			}
 		}
 		return returnValue;
 	}
