@@ -296,34 +296,28 @@ public class DataTuple {
 
 	public String returnState (String state) {
 
-		HashMap <String, String> stateMap = new HashMap<>();
+		return switch (state) {
+			case "isBlinkyEdible" -> Boolean.toString(isBlinkyEdible);
+			case "isInkyEdible" -> Boolean.toString(isInkyEdible);
+			case "isPinkyEdible" -> Boolean.toString(isPinkyEdible);
+			case "isSueEdible" -> Boolean.toString(isSueEdible);
+			case "blinkyDist" -> discretizeDistance(blinkyDist).toString();
+			case "inkyDist" -> discretizeDistance(inkyDist).toString();
+			case "pinkyDist" -> discretizeDistance(pinkyDist).toString();
+			case "sueDist" -> discretizeDistance(sueDist).toString();
+			case "blinkyDir" -> blinkyDir.toString();
+			case "inkyDir" -> inkyDir.toString();
+			case "pinkyDir" -> pinkyDir.toString();
+			case "sueDir" -> sueDir.toString();
 
-		stateMap.put("isBlinkyEdible",  Boolean.toString(isBlinkyEdible));
-		stateMap.put("IsInkyEdible",Boolean.toString(isInkyEdible));
-		stateMap.put("IsPinkyEdible", Boolean.toString(isPinkyEdible));
-		stateMap.put("IsSueEdible", Boolean.toString(isSueEdible));
-
-		stateMap.put("blinkyDist", discretizeDistance(blinkyDist).toString());
-		stateMap.put("inkyDist", discretizeDistance(inkyDist).toString());
-		stateMap.put("pinkyDist", discretizeDistance(pinkyDist).toString());
-		stateMap.put("sueDist", discretizeDistance(pinkyDist).toString());
-
-
-		stateMap.put("blinkyDir", blinkyDir.toString());
-		stateMap.put("inkyDir", inkyDir.toString());
-		stateMap.put("pinkyDir", pinkyDir.toString());
-		stateMap.put("sueDir", sueDir.toString());
-
-
-		stateMap.put("atJunction", Boolean.toString(atJunction));
-		stateMap.put("upMovePossible", Boolean.toString(upMovePossible));
-		stateMap.put("downMovePossible", Boolean.toString(downMovePossible));
-		stateMap.put("rightMovePossible", Boolean.toString(rightMovePossible));
-		stateMap.put("leftMovePossible", Boolean.toString(leftMovePossible));
-
-		String returnState = stateMap.get(state);
-
-		return state;
+			//Custom attributes
+			case "atCrossroads" -> Boolean.toString(atJunction);
+			case "upPossible" -> Boolean.toString(upMovePossible);
+			case "downPossible" -> Boolean.toString(downMovePossible);
+			case "leftPossible" -> Boolean.toString(leftMovePossible);
+			case "rightPossible" -> Boolean.toString(rightMovePossible);
+			default -> "";
+		};
 
 	}
 

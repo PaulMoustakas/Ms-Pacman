@@ -15,20 +15,20 @@ import java.util.*;
  */
 public class MyPacMan extends Controller<MOVE> {
 
-	private MOVE myMove=MOVE.NEUTRAL;
+	private final MOVE myMove=MOVE.NEUTRAL;
 
 	private List<DataTuple> testSet;
 	private List<DataTuple> trainingSet;
 	private Map<String, List<String>> attributeMap;
 	private ArrayList<String> attributeList;
 
-	private Node rootNode;
+	private final Node rootNode;
 
 	public MyPacMan() {
 		divideAndGetDataPortions(20);
 		initializeModelAttributes();
 		rootNode = initializeTree((ArrayList<DataTuple>) trainingSet, attributeList);
-		treeAccuracy();
+
 	}
 
 	
@@ -107,12 +107,12 @@ public class MyPacMan extends Controller<MOVE> {
 
 		MOVE move = null;
 
-		if (node.nodeChildren.size() == 0 ) {
-			 move = MOVE.valueOf(node.getNodeLabel());
+		if (node.children.size() == 0 ) {
+			 move = MOVE.valueOf(node.getLabel());
 		}
 
 		else {
-			String valueOfAttribute = dataTuple.returnState(node.getNodeLabel());
+			String valueOfAttribute = dataTuple.returnState(node.getLabel());
 			System.out.println(valueOfAttribute);
 			Node next = null;
 			next = node.getChild(valueOfAttribute);
