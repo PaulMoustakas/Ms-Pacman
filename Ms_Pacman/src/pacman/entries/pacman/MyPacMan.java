@@ -5,7 +5,6 @@ import dataRecording.DataTuple;
 import pacman.controllers.Controller;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.game.internal.Node;
 
 import java.util.*;
 
@@ -23,11 +22,11 @@ public class MyPacMan extends Controller<MOVE> {
 	private Map<String, List<String>> traitMap;
 	private List<String> traitList;
 
-	private Node node;
+	private Node rootNode;
 
 	public MyPacMan() {
 		divideAndGetDataPortions(20);
-		initializeCharacteristics();
+		initializeModelAttributes();
 
 
 	}
@@ -91,14 +90,71 @@ public class MyPacMan extends Controller<MOVE> {
 			return node;
 		}
 
-		String trait =
-
-
-
-
 	}
 
-	private void initializeCharacteristics () {
+	public void treeAccuracy () {
+		double upMovesPerformed = 0, downMovesPerformed = 0, leftMovesPerformed = 0, rightMovesPerformed = 0, neutralMovesPerformed = 0;
+
+		double modelHits = 0;
+
+		int i = 0;
+
+		while (i < testSet.size()) {
+			MOVE testSetMove = testSet.get(i).DirectionChosen;
+			MOVE actualMove = treeTraversal(rootNode,testSet.get(i));
+
+			if (testSetMove == actualMove)
+				modelHits++;
+
+			if (testSetMove == MOVE.UP)
+				upMovesPerformed++;
+
+			if (testSetMove == MOVE.DOWN)
+				downMovesPerformed++;
+
+
+			if (testSetMove == MOVE.LEFT)
+				leftMovesPerformed++;
+
+			if (testSetMove == MOVE.NEUTRAL)
+				neutralMovesPerformed++;
+
+
+			double accuracy = modelHits / testSet.size();
+
+			System.out.println("\nTree Accuracy: " + accuracy + "\n");
+
+			System.out.println("Up: " + (upMovesPerformed/ testSet.size()));
+			System.out.println("Down: " + (downMovesPerformed / testSet.size()));
+			System.out.println("Left: " + (leftMovesPerformed / testSet.size()));
+			System.out.println("Right: " + ( rightMovesPerformed/ testSet.size()));
+			System.out.println("Neutral: " + (neutralMovesPerformed / testSet.size()));
+
+		}
+	}
+
+	private MOVE treeTraversal(pacman.entries.pacman.Node node, DataTuple dataTuple) {
+
+		MOVE move;
+
+		if (node.nodeChildren.size() == 0 ) {
+			 move = MOVE.valueOf(node.getNodeLabel());
+		}
+
+		else {
+			String valueOfAttribute = dataTuple.returnState(node.getNodeLabel());
+			pacman.entries.pacman.Node next = node.getChild(valueOfAttribute);
+
+			move = treeTraversal(next,dataTuple);
+		}
+
+		return move;
+	}
+
+
+
+
+	private void initializeModelAttributes() {
 		traitMap = new HashMap<>();
 
 		setDirections();
