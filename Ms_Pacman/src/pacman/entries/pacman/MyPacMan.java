@@ -20,14 +20,15 @@ public class MyPacMan extends Controller<MOVE> {
 
 	private List<DataTuple> testSet;
 	private List<DataTuple> trainingSet;
-	private Map<String, List<String>> traitMap;
-	private List<String> traitList;
+	private Map<String, List<String>> attributMap;
+	private ArrayList<String> attributeList;
 
 	private Node node;
 
 	public MyPacMan() {
 		divideAndGetDataPortions(20);
 		initializeCharacteristics();
+		
 
 
 	}
@@ -65,13 +66,13 @@ public class MyPacMan extends Controller<MOVE> {
 	}
 
 	private void initializeCharacteristics () {
-		traitMap = new HashMap<>();
+		attributMap = new HashMap<>();
 
 		setDirections();
 		setDistance();
 		setBools();
 
-		traitList = new ArrayList<>(traitMap.keySet());
+		attributeList = new ArrayList<>(attributMap.keySet());
 	}
 
 	private void setDirections () {
@@ -83,10 +84,10 @@ public class MyPacMan extends Controller<MOVE> {
 		directionStrings.add("NEUTRAL");
 		directionStrings.add("LEFT");
 
-		traitMap.put("inkyDir", directionStrings);
-		traitMap.put("pinkyDir", directionStrings);
-		traitMap.put("blinkyDir", directionStrings);
-		traitMap.put("sueDir", directionStrings);
+		attributMap.put("inkyDir", directionStrings);
+		attributMap.put("pinkyDir", directionStrings);
+		attributMap.put("blinkyDir", directionStrings);
+		attributMap.put("sueDir", directionStrings);
 	}
 
 	private void setDistance() {
@@ -99,10 +100,10 @@ public class MyPacMan extends Controller<MOVE> {
 		distanceStrings.add("VERY_LOW");
 		distanceStrings.add("NONE");
 
-		traitMap.put("blinkyDist", distanceStrings);
-		traitMap.put("pinkyDist", distanceStrings);
-		traitMap.put("sueDist", distanceStrings);
-		traitMap.put("inkyDist", distanceStrings);
+		attributMap.put("blinkyDist", distanceStrings);
+		attributMap.put("pinkyDist", distanceStrings);
+		attributMap.put("sueDist", distanceStrings);
+		attributMap.put("inkyDist", distanceStrings);
 	}
 
 	private void setBools () {
@@ -111,16 +112,16 @@ public class MyPacMan extends Controller<MOVE> {
 		boolString.add("true");
 		boolString.add("false");
 
-		traitMap.put("isBlinkyEdible",boolString);
-		traitMap.put("isPinkyEdible",boolString);
-		traitMap.put("isSueEdible",boolString);
-		traitMap.put("isInkyEdible",boolString);
+		attributMap.put("isBlinkyEdible",boolString);
+		attributMap.put("isPinkyEdible",boolString);
+		attributMap.put("isSueEdible",boolString);
+		attributMap.put("isInkyEdible",boolString);
 	}
 
 
 
 
-	private pacman.entries.pacman.Node initializeTree (ArrayList<DataTuple> trainingSet, ArrayList<String> traitList) {
+	private pacman.entries.pacman.Node initializeTree (ArrayList<DataTuple> trainingSet, ArrayList<String> attributeList) {
 
 		pacman.entries.pacman.Node node = new pacman.entries.pacman.Node();
 
@@ -141,17 +142,34 @@ public class MyPacMan extends Controller<MOVE> {
 			return node;
 		}
 
-		if (traitList.size() == 0) {
+		if (attributeList.size() == 0) {
 			node.setLabel(getMajority(trainingSet).toString());
 			return node;
 		}
 
-		//String trait =
+		String A = S(trainingSet, attributeList);
 
+		node.setLabel(A);
+		attributeList.remove(A);
 
+		List<String> possibleValueA = attributMap.get(A);
 
-		node.setLabel(trait);
-		traitList.remove(trait);
+		for (String AS : possibleValueA) {
+			ArrayList<DataTuple> TS = new ArrayList<>();
+			for (DataTuple dataTuple : trainingSet) {
+				if (dataTuple.returnState(A).equals(AS)) {
+					TS.add(dataTuple);
+				}
+			}
+
+			if (TS.size() == 0) {
+				node.addChild(AS,new pacman.entries.pacman.Node(getMajority(trainingSet).toString()));
+			} else {
+				node.addChild(AS,initializeTree(TS, (ArrayList<String>) attributeList.clone()));
+			}
+		}
+
+		return node;
 	}
 
 
@@ -199,7 +217,7 @@ public class MyPacMan extends Controller<MOVE> {
 
 		for (String A : traitList) {
 			double tempA = 0.0;
-			ArrayList<String> possibleValueA = (ArrayList<String>) traitMap.get(A);
+			ArrayList<String> possibleValueA = (ArrayList<String>) attributMap.get(A);
 			Map<String, Integer> valueMap = new HashMap<>();
 
 			for (String AValue : possibleValueA) {
@@ -252,7 +270,7 @@ public class MyPacMan extends Controller<MOVE> {
 	}
 
 
-	
+
 	private HashMap<MOVE, Integer> directionMoveCounterMap () {
 		HashMap<MOVE, Integer> directionMoveCountMap = new HashMap<>();
 		directionMoveCountMap.put(MOVE.UP, 0);
