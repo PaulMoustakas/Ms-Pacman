@@ -28,7 +28,7 @@ public class MyPacMan extends Controller<MOVE> {
 		divideAndGetDataPortions(20);
 		initializeModelAttributes();
 		rootNode = initializeTree((ArrayList<DataTuple>) trainingSet, attributeList);
-
+		// treeAccuracy();
 	}
 
 	
@@ -75,25 +75,17 @@ public class MyPacMan extends Controller<MOVE> {
 
 			if (testSetMove == actualMove)
 				modelHits++;
-
 			if (testSetMove == MOVE.UP)
 				upMovesPerformed++;
-
 			if (testSetMove == MOVE.DOWN)
 				downMovesPerformed++;
-
-
 			if (testSetMove == MOVE.LEFT)
 				leftMovesPerformed++;
-
 			if (testSetMove == MOVE.NEUTRAL)
 				neutralMovesPerformed++;
 
-
 			double accuracy = modelHits / testSet.size();
-
 			System.out.println("Tree Accuracy: " + accuracy + "\n");
-
 		}
 	}
 
@@ -104,7 +96,6 @@ public class MyPacMan extends Controller<MOVE> {
 		if (node.nodeChildren.size() == 0 ) {
 			 move = MOVE.valueOf(node.getLabel());
 		}
-
 		else {
 			String valueOfAttribute = dataTuple.returnState(node.getLabel());
 			System.out.println(valueOfAttribute);
@@ -119,11 +110,9 @@ public class MyPacMan extends Controller<MOVE> {
 
 	private void initializeModelAttributes() {
 		attributeMap = new HashMap<>();
-
 		setDirections();
 		setDistance();
 		setBools();
-
 		attributeList = new ArrayList<>(attributeMap.keySet());
 	}
 
@@ -176,8 +165,6 @@ public class MyPacMan extends Controller<MOVE> {
 		attributeMap.put("leftMovePossible",boolString);
 		attributeMap.put("rightMovePossible",boolString);
 	}
-
-
 
 
 	private pacman.entries.pacman.Node initializeTree (ArrayList<DataTuple> trainingSet, ArrayList<String> attributeList) {
@@ -270,7 +257,6 @@ public class MyPacMan extends Controller<MOVE> {
 	 */
 	private String returnS(ArrayList<DataTuple> dataSet, ArrayList<String> traitList) {
 		String returnValue = "";
-
 		double valueAlpha = Integer.MAX_VALUE;
 
 		for (String A : traitList) {
@@ -288,7 +274,6 @@ public class MyPacMan extends Controller<MOVE> {
 						subSet.add(dataTuple);
 					}
 				}
-
 
 				HashMap<MOVE, Integer> directionMoveCountMap = directionMoveCounterMap();
 
@@ -311,7 +296,6 @@ public class MyPacMan extends Controller<MOVE> {
 					double subsetNeutral= (directionMoveCountMap.get(MOVE.NEUTRAL) 	/ valueMoveCount) * (log2(directionMoveCountMap.get(MOVE.NEUTRAL)   / valueMoveCount));
 
 					tempA += AValueOccurrences * (- subsetUP - subsetDown - subsetLeft - subsetRight - subsetNeutral);
-
 				}
 			}
 
@@ -319,7 +303,6 @@ public class MyPacMan extends Controller<MOVE> {
 				valueAlpha = tempA;
 				returnValue = A;
 			}
-
 		}
 		return returnValue;
 	}

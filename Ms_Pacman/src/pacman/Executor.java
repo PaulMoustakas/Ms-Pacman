@@ -90,8 +90,8 @@ public class Executor
 
 
 		//Ms Pacman AI
-		MyPacMan myPacMan = new MyPacMan();
-		exec.runGameTimed(myPacMan, new StarterGhosts(), visual);
+		MyPacMan MsPacman = new MyPacMan();
+		exec.runGameTimed(MsPacman,new StarterGhosts(),visual);
 	}
 	
     /**
