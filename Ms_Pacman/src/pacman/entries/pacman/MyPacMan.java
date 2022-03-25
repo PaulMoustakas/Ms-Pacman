@@ -28,7 +28,11 @@ public class MyPacMan extends Controller<MOVE> {
 		divideAndGetDataPortions(20);
 		initializeModelAttributes();
 		rootNode = initializeTree((ArrayList<DataTuple>) trainingSet, attributeList);
+<<<<<<< Updated upstream
 		// treeAccuracy();
+=======
+		treeAccuracy();
+>>>>>>> Stashed changes
 	}
 
 	
@@ -67,14 +71,13 @@ public class MyPacMan extends Controller<MOVE> {
 
 		double modelHits = 0;
 
-		int i = 0;
+		for (DataTuple d: testSet) {
+			MOVE testSetMove = d.DirectionChosen;
+			MOVE actualMove = treeTraversal(rootNode, d);
 
-		while (i < testSet.size()) {
-			MOVE testSetMove = testSet.get(i).DirectionChosen;
-			MOVE actualMove = treeTraversal(rootNode,testSet.get(i));
-
-			if (testSetMove == actualMove)
+			if(testSetMove == actualMove) {
 				modelHits++;
+<<<<<<< Updated upstream
 			if (testSetMove == MOVE.UP)
 				upMovesPerformed++;
 			if (testSetMove == MOVE.DOWN)
@@ -87,6 +90,29 @@ public class MyPacMan extends Controller<MOVE> {
 			double accuracy = modelHits / testSet.size();
 			System.out.println("Tree Accuracy: " + accuracy + "\n");
 		}
+=======
+			}
+
+			switch (testSetMove) {
+				case UP -> upMovesPerformed++;
+				case DOWN -> downMovesPerformed++;
+				case LEFT -> leftMovesPerformed++;
+				case RIGHT -> rightMovesPerformed++;
+				case NEUTRAL -> neutralMovesPerformed++;
+			}
+		}
+
+
+		double accuracy = modelHits / testSet.size();
+
+			System.out.println("Tree Accuracy: " + accuracy + "\n");
+			System.out.println("Amount of up-moves performed: " + (upMovesPerformed / testSet.size()));
+			System.out.println("Amount of down-moves performed: " + (downMovesPerformed / testSet.size()));
+			System.out.println("Amount of left-moves performed: " + (leftMovesPerformed / testSet.size()));
+			System.out.println("Amount of right-moves performed: " + (rightMovesPerformed/ testSet.size()));
+			System.out.println("Amount of neutral moves performed: " + (neutralMovesPerformed / testSet.size()));
+
+>>>>>>> Stashed changes
 	}
 
 	private MOVE treeTraversal(pacman.entries.pacman.Node node, DataTuple dataTuple) {
@@ -98,9 +124,7 @@ public class MyPacMan extends Controller<MOVE> {
 		}
 		else {
 			String valueOfAttribute = dataTuple.returnState(node.getLabel());
-			System.out.println(valueOfAttribute);
 			Node next = node.getChild(valueOfAttribute);
-
 			move = treeTraversal(next,dataTuple);
 		}
 		return move;
