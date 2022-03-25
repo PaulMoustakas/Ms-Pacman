@@ -6,6 +6,7 @@ import pacman.controllers.Controller;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 /*
@@ -28,11 +29,7 @@ public class MyPacMan extends Controller<MOVE> {
 		divideAndGetDataPortions(20);
 		initializeModelAttributes();
 		rootNode = initializeTree((ArrayList<DataTuple>) trainingSet, attributeList);
-<<<<<<< Updated upstream
-		// treeAccuracy();
-=======
 		treeAccuracy();
->>>>>>> Stashed changes
 	}
 
 	
@@ -77,7 +74,6 @@ public class MyPacMan extends Controller<MOVE> {
 
 			if(testSetMove == actualMove) {
 				modelHits++;
-<<<<<<< Updated upstream
 			if (testSetMove == MOVE.UP)
 				upMovesPerformed++;
 			if (testSetMove == MOVE.DOWN)
@@ -87,32 +83,23 @@ public class MyPacMan extends Controller<MOVE> {
 			if (testSetMove == MOVE.NEUTRAL)
 				neutralMovesPerformed++;
 
-			double accuracy = modelHits / testSet.size();
-			System.out.println("Tree Accuracy: " + accuracy + "\n");
-		}
-=======
-			}
+			if (testSetMove == MOVE.RIGHT)
+				rightMovesPerformed++;
 
-			switch (testSetMove) {
-				case UP -> upMovesPerformed++;
-				case DOWN -> downMovesPerformed++;
-				case LEFT -> leftMovesPerformed++;
-				case RIGHT -> rightMovesPerformed++;
-				case NEUTRAL -> neutralMovesPerformed++;
-			}
 		}
+			}
 
 
 		double accuracy = modelHits / testSet.size();
+		DecimalFormat numberFormat = new DecimalFormat("#.0");
 
-			System.out.println("Tree Accuracy: " + accuracy + "\n");
-			System.out.println("Amount of up-moves performed: " + (upMovesPerformed / testSet.size()));
-			System.out.println("Amount of down-moves performed: " + (downMovesPerformed / testSet.size()));
-			System.out.println("Amount of left-moves performed: " + (leftMovesPerformed / testSet.size()));
-			System.out.println("Amount of right-moves performed: " + (rightMovesPerformed/ testSet.size()));
-			System.out.println("Amount of neutral moves performed: " + (neutralMovesPerformed / testSet.size()));
+			System.out.println("Tree Accuracy: " + numberFormat.format(accuracy * 100) + "%" +  "\n" );
+			System.out.println("Amount of up-moves performed: " + ( numberFormat.format(upMovesPerformed / testSet.size() * 100)) + "%");
+			System.out.println("Amount of down-moves performed: " + ( numberFormat.format(downMovesPerformed / testSet.size() * 100)) + "%");
+			System.out.println("Amount of left-moves performed: " + (numberFormat.format(leftMovesPerformed / testSet.size() * 100)) + "%");
+			System.out.println("Amount of right-moves performed: " + (numberFormat.format(rightMovesPerformed / testSet.size() * 100)) + "%");
+			System.out.println("Amount of neutral moves performed: " + (numberFormat.format(neutralMovesPerformed / testSet.size() * 100)) + "%");
 
->>>>>>> Stashed changes
 	}
 
 	private MOVE treeTraversal(pacman.entries.pacman.Node node, DataTuple dataTuple) {
